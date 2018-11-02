@@ -1,16 +1,20 @@
-{% extends "base.html" %}
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Hyperspace by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
 
-{% load staticfiles %}
-{% load wagtailcore_tags %}
-
-{% block body_class %}template-homepage{% endblock %}
-
-{% block extra_css %}
-	<link rel="stylesheet" href="{% static 'css/main.css' %}" />
-{% endblock %} 
-
-{% block content %}
-	<!-- Sidebar -->
+		<!-- Sidebar -->
 			<section id="sidebar">
 				<div class="inner">
 					<nav>
@@ -26,11 +30,11 @@
 
 		<!-- Wrapper -->
 			<div id="wrapper">
-	
+
 				<!-- Intro -->
 					<section id="intro" class="wrapper style1 fullscreen fade-up">
 						<div class="inner">
-							<h1>HOFDATA</h1>
+							<h1>Hyperspace</h1>
 							<p>Just another fine responsive site template designed by <a href="http://html5up.net">HTML5 UP</a><br />
 							and released for free under the <a href="http://html5up.net/license">Creative Commons</a>.</p>
 							<ul class="actions">
@@ -42,10 +46,10 @@
 				<!-- One -->
 					<section id="one" class="wrapper style2 spotlights">
 						<section>
-							<a href="#" class="image"><img src="{% static 'images/pic01.jpg' %}" alt="" data-position="center center" /></a>
+							<a href="#" class="image"><img src="images/pic01.jpg" alt="" data-position="center center" /></a>
 							<div class="content">
 								<div class="inner">
-									<h2>{{ page.body|richtext }}</h2>
+									<h2>Sed ipsum dolor</h2>
 									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
 									<ul class="actions">
 										<li><a href="generic.html" class="button">Learn more</a></li>
@@ -54,7 +58,7 @@
 							</div>
 						</section>
 						<section>
-							<a href="#" class="image"><img src="{% static 'images/pic02.jpg' %}" alt="" data-position="top center" /></a>
+							<a href="#" class="image"><img src="images/pic02.jpg" alt="" data-position="top center" /></a>
 							<div class="content">
 								<div class="inner">
 									<h2>Feugiat consequat</h2>
@@ -66,7 +70,7 @@
 							</div>
 						</section>
 						<section>
-							<a href="#" class="image"><img src="{% static 'images/pic03.jpg' %}" alt="" data-position="25% 25%" /></a>
+							<a href="#" class="image"><img src="images/pic03.jpg" alt="" data-position="25% 25%" /></a>
 							<div class="content">
 								<div class="inner">
 									<h2>Ultricies aliquam</h2>
@@ -191,15 +195,15 @@
 					</ul>
 				</div>
 			</footer>
-    
-{% endblock %}
 
-{% block extra_js %}
-	<script src="{% static 'js/jquery.min.js' %}"></script>
-	<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
-	<script src="{% static 'js/jquery.scrolly.min.js' %}"></script>
-	<script src="{% static 'js/browser.min.js' %}"></script>
-	<script src="{% static 'js/breakpoints.min.js' %}"></script>
-	<script src="{% static 'js/util.js' %}"></script>
-	<script src="{% static 'js/main.js' %}"></script>
-{% endblock %}
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
