@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}	
+
+{% load wagtailcore_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-blogindexpage{% endblock %}
+
+{% block content %}
+
+	<head>
+		<title>Generic - Hyperspace by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+	</head>
+	<body class="is-preload">
+	
+	<!-- Header -->
+		<header id="header">
+			<a href="/" class="title">HOFDATA</a>
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="blog" class="active">Blog</a></li>
+					<li><a href="#">About Me</a></li>
+					<li><a href="#">Get in Touch</a></li>
+				</ul>
+			</nav>
+		</header>
+		
+	<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+				<section id="main" class="wrapper">
+					<div class="inner">
+					
+						<h1>{{ page.title }}</h1>
+
+						<div class="intro">{{ page.intro|richtext }}</div>
+
+						{% for post in blogpages %}
+							{% with post=post.specific %}
+								<h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
+
+								{% with post.main_image as main_image %}
+									{% if main_image %}{% image main_image fill-160x100 %}{% endif %}
+								{% endwith %}
+
+								<p>{{ post.intro }}</p>
+								{{ post.body|richtext }}
+							{% endwith %}
+						{% endfor %}
+						
+					</div>
+				</section>
+
+		</div>
+
+{% endblock %}

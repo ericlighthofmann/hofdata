@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% load staticfiles %}
+
 {% load wagtailcore_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -15,10 +17,10 @@
 				<div class="inner">
 					<nav>
 						<ul>
-							<li><a href="#intro">Welcome</a></li>
-							<li><a href="#one">Who we are</a></li>
-							<li><a href="#two">What we do</a></li>
-							<li><a href="#three">Get in touch</a></li>
+							<li><a href="#intro">HOFDATA</a></li>
+							<li><a href="#one">Blog</a></li>
+							<li><a href="#two">About Me</a></li>
+							<li><a href="#three">Get in Touch</a></li>
 						</ul>
 					</nav>
 				</div>
@@ -31,8 +33,8 @@
 					<section id="intro" class="wrapper style1 fullscreen fade-up">
 						<div class="inner">
 							<h1>HOFDATA</h1>
-							<p>Just another fine responsive site template designed by <a href="http://html5up.net">HTML5 UP</a><br />
-							and released for free under the <a href="http://html5up.net/license">Creative Commons</a>.</p>
+							<p>Python-assisted data anlaysis blog and personal site for <br />
+							Python & Django developer, Eric Hofmann.</p>
 							<ul class="actions">
 								<li><a href="#one" class="button scrolly">Learn more</a></li>
 							</ul>
@@ -40,44 +42,33 @@
 					</section>
 
 				<!-- One -->
-					<section id="one" class="wrapper style2 spotlights">
-						<section>
-							<a href="#" class="image"><img src="{% static 'images/pic01.jpg' %}" alt="" data-position="center center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>{{ page.body|richtext }}</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="{% static 'images/pic02.jpg' %}" alt="" data-position="top center" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Feugiat consequat</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<section>
-							<a href="#" class="image"><img src="{% static 'images/pic03.jpg' %}" alt="" data-position="25% 25%" /></a>
-							<div class="content">
-								<div class="inner">
-									<h2>Ultricies aliquam</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn more</a></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-					</section>
+					{% for post in blogpages %}
+						{% with post=post.specific %}
+							{% if forloop.last %}
+								<section class='wrapper style2 spotlights'>
+							{% else %}
+								<section id='one' class='wrapper style2 spotlights'>
+							{% endif %}
+								<section>
+									{% with post.main_image as main_image %}
+										{% if main_image %}
+											<a href='{% pageurl post%}' class='image'>{% image main_image fill-160x100 %}</a>
+										{% endif %}
+									{% endwith %}
+									
+									<div class="content">
+										<div class="inner">
+											<h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
+											<p>{{ post.intro }}</p>
+											<ul class="actions">
+												<li><a href="{% pageurl post %}" class="button">Learn more</a></li>
+											</ul>
+										</div>
+									</div>
+								</section>
+							</section>
+						{% endwith %}
+					{% endfor %}
 
 				<!-- Two -->
 					<section id="two" class="wrapper style3 fade-up">
