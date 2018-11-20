@@ -9,6 +9,7 @@
 
 {% block extra_css %}
 	<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+	
 {% endblock %} 
 
 {% block content %}
@@ -42,9 +43,9 @@
 					</section>
 
 				<!-- One -->
-					{% for post in blogpages %}
+					{% for post in blogpages|slice:"0:3" %}
 						{% with post=post.specific %}
-							{% if forloop.last %}
+							{% if forloop.last and blogpages|length > 1 %}
 								<section class='wrapper style2 spotlights'>
 							{% else %}
 								<section id='one' class='wrapper style2 spotlights'>
@@ -52,7 +53,7 @@
 								<section>
 									{% with post.main_image as main_image %}
 										{% if main_image %}
-											<a href='{% pageurl post%}' class='image'>{% image main_image fill-160x100 %}</a>
+											<a href='{% pageurl post%}' class='image'>{% image main_image fill-640x400 %}</a>
 										{% endif %}
 									{% endwith %}
 									
@@ -117,7 +118,7 @@
 					<section id="three" class="wrapper style1 fade-up">
 						<div class="inner">
 							<h2>Get in touch</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
+							<p>Feel free to reach out with any questions about the blog articles, freelance opportunities or constructive feedback.</p>
 							<div class="split style1">
 								<section>
 									<form method="post" action="#">
@@ -143,27 +144,18 @@
 								<section>
 									<ul class="contact">
 										<li>
-											<h3>Address</h3>
-											<span>12345 Somewhere Road #654<br />
-											Nashville, TN 00000-0000<br />
-											USA</span>
+											<h3>Location</h3>
+											<span>San Diego, CA</span>
 										</li>
 										<li>
 											<h3>Email</h3>
-											<a href="#">user@untitled.tld</a>
-										</li>
-										<li>
-											<h3>Phone</h3>
-											<span>(000) 000-0000</span>
+											<a href="#">ericlightohfmann@gmail.com</a>
 										</li>
 										<li>
 											<h3>Social</h3>
 											<ul class="icons">
-												<li><a href="#" class="fa-twitter"><span class="label">Twitter</span></a></li>
-												<li><a href="#" class="fa-facebook"><span class="label">Facebook</span></a></li>
-												<li><a href="#" class="fa-github"><span class="label">GitHub</span></a></li>
-												<li><a href="#" class="fa-instagram"><span class="label">Instagram</span></a></li>
-												<li><a href="#" class="fa-linkedin"><span class="label">LinkedIn</span></a></li>
+												<li><a href="https://github.com/ericlighthofmann" class="fa-github"><span class="label">GitHub</span></a></li>
+												<li><a href="https://www.linkedin.com/in/ericlhofmann/" class="fa-linkedin"><span class="label">LinkedIn</span></a></li>
 											</ul>
 										</li>
 									</ul>

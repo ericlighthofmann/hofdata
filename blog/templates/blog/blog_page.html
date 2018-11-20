@@ -12,6 +12,7 @@
 		<title>Generic - Hyperspace by HTML5 UP</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
 	</head>
 	<body class="is-preload">
@@ -22,7 +23,7 @@
 			<nav>
 				<ul>
 					<li><a href="/">Home</a></li>
-					<li><a href="blog" class="active">Blog</a></li>
+					<li><a href="/blog" class="active">Blog</a></li>
 					<li><a href="#">About Me</a></li>
 					<li><a href="#">Get in Touch</a></li>
 				</ul>
@@ -35,42 +36,18 @@
 			<!-- Main -->
 				<section id="main" class="wrapper">
 					<div class="inner">
-						<h1 class="major">{{ page.title }}</h1>
+						<h2 class="major">{{ page.title }}</h2>
 						<p class="meta">{{ page.date }}</p>
 						
-						{% with categories=page.categories.all %}
-							{% if categories %}
-								<h3>Posted in:</h3>
-								<ul>
-									{% for category in categories %}
-										<li style="display: inline">
-											{% image category.icon fill-32x32 style="vertical-align: middle" %}
-											{{ category.name }}
-										</li>
-									{% endfor %}
-								</ul>
-							{% endif %}
-						{% endwith %}
-						
 						{% for item in page.gallery_images.all %}
-							<div style="float: left; margin: 10px">
-								{% image item.image fill-320x240 %}
+							<div>
+								{% image item.image fill-1100x240 %}
 								<p>{{ item.caption }}</p>
 							</div>
 						{% endfor %}
-						<div class="intro">{{ page.intro }}</div>
 
 						{{ page.body|richtext }}
 
-						{% if page.tags.all.count %}
-							<div class="tags">
-								<h3>Tags</h3>
-								{% for tag in page.tags.all %}
-									<a href="{% slugurl 'tags' %}?tag={{ tag }}"><button type="button">{{ tag }}</button></a>
-								{% endfor %}
-							</div>
-						{% endif %}
-						
 						<p><a href="{{ page.get_parent.url }}">Return to All Posts</a></p>
 	
 					</div>

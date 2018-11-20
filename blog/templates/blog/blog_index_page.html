@@ -13,6 +13,7 @@
 		<title>Generic - Hyperspace by HTML5 UP</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
 	</head>
 	<body class="is-preload">
@@ -23,7 +24,7 @@
 			<nav>
 				<ul>
 					<li><a href="/">Home</a></li>
-					<li><a href="blog" class="active">Blog</a></li>
+					<li><a href="/blog" class="active">Blog</a></li>
 					<li><a href="#">About Me</a></li>
 					<li><a href="#">Get in Touch</a></li>
 				</ul>
@@ -39,18 +40,21 @@
 					
 						<h1>{{ page.title }}</h1>
 
-						<div class="intro">{{ page.intro|richtext }}</div>
-
 						{% for post in blogpages %}
 							{% with post=post.specific %}
-								<h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
+								<div class='media'>
+								
+									{% with post.main_image as main_image %}
+										{% if main_image %}{% image main_image fill-200x170 class='align-self-center mr-3' %}{% endif %}
+									{% endwith %}
+									
+									<div class='media-body'>
+										<h3 class="mt-0"><a href="{% pageurl post %}">{{ post.title }}</a></h3>
 
-								{% with post.main_image as main_image %}
-									{% if main_image %}{% image main_image fill-160x100 %}{% endif %}
-								{% endwith %}
-
-								<p>{{ post.intro }}</p>
-								{{ post.body|richtext }}
+										<p sclass="mb-0">{{ post.intro }}</p>
+									</div>
+									
+								</div>
 							{% endwith %}
 						{% endfor %}
 						
