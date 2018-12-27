@@ -9,7 +9,6 @@
 
 {% block extra_css %}
 	<link rel="stylesheet" href="{% static 'css/main.css' %}" />
-	
 {% endblock %} 
 
 {% block content %}
@@ -37,7 +36,7 @@
 							<p>Python-assisted data anlaysis blog and personal site for <br />
 							Python & Django developer, Eric Hofmann.</p>
 							<ul class="actions">
-								<li><a href="#one" class="button scrolly">Learn more</a></li>
+								<li><a href="#one" class="button scrolly">Go to Blog</a></li>
 							</ul>
 						</div>
 					</section>
@@ -74,43 +73,30 @@
 				<!-- Two -->
 					<section id="two" class="wrapper style3 fade-up">
 						<div class="inner">
-							<h2>What we do</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
+							<h2>About Me</h2>
+							<p>Hi! My name's Eric Hofmann. I'm a full-stack programmer focusing on Python, Django and Javascript. I'm currently located in San Diego, CA. Other programming hobbies include big data analysis, data visualization, natural language processing, machine learning and investment automation.</p>
 							<div class="features">
 								<section>
 									<span class="icon major fa-code"></span>
-									<h3>Lorem ipsum amet</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon major fa-lock"></span>
-									<h3>Aliquam sed nullam</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
+									<h3>Full-stack developer</h3>
+									<p>Experience in a Django/Postgres stack using Javascript, HTML and CSS for front-end development. Specialize in business intelligence and business analytics using Highcharts for data visualization.</p>
 								</section>
 								<section>
 									<span class="icon major fa-cog"></span>
-									<h3>Sed erat ullam corper</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
+									<h3>Process Automation</h3>
+									<p>Automating common business tasks such as manipulating .csv and Excel files using the csv and openpyxl libraries in Python, creating APIs, and automating reporting. </p>
 								</section>
 								<section>
-									<span class="icon major fa-desktop"></span>
-									<h3>Veroeros quis lorem</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
+									<span class="icon major fa-comments"></span>
+									<h3>Natural Language Processing</h3>
+									<p>Using NLP, breaking down large amounts of text to search for patterns including sentiment and pattern analysis.</p>
 								</section>
 								<section>
-									<span class="icon major fa-chain"></span>
-									<h3>Urna quis bibendum</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
-								</section>
-								<section>
-									<span class="icon major fa-diamond"></span>
-									<h3>Aliquam urna dapibus</h3>
-									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
+									<span class="icon major fa-money"></span>
+									<h3>Finance & Investments</h3>
+									<p>Creating automatic processes to aid in smart investment decisions including Python programs which continuously monitor for investment opportunities and inform the user when securities with certain criteria are met.</p>
 								</section>
 							</div>
-							<ul class="actions">
-								<li><a href="generic.html" class="button">Learn more</a></li>
-							</ul>
 						</div>
 					</section>
 
@@ -121,7 +107,8 @@
 							<p>Feel free to reach out with any questions about the blog articles, freelance opportunities or constructive feedback.</p>
 							<div class="split style1">
 								<section>
-									<form method="post" action="#">
+									<form action="/contact-me/" method="post">
+										{% csrf_token %}
 										<div class="fields">
 											<div class="field half">
 												<label for="name">Name</label>
@@ -185,4 +172,20 @@
 	<script src="{% static 'js/breakpoints.min.js' %}"></script>
 	<script src="{% static 'js/util.js' %}"></script>
 	<script src="{% static 'js/main.js' %}"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	
+	<script>
+	$( document ).ready(function() {
+		{% if messages %}
+			{% for message in messages %}
+				swal({
+					icon: "success",
+					title: "Email sent!", 
+					text: "{{message}}", 
+					buttons: false
+				});
+			{% endfor %}
+		{% endif %}
+	});
+</script>
 {% endblock %}
