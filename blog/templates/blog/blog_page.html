@@ -46,7 +46,15 @@
 							</div>
 						{% endfor %}
 
-						{{ page.body|richtext }}
+						{% for block in page.body %}
+							{% if block.block_type == 'heading' %}
+								<h2>{{ block.value }}</h2>
+							{% else %}
+								<section class="block-{{ block.block_type }}">
+									{% include_block block %}
+								</section>
+							{% endif %}
+						{% endfor %}
 
 						<p><a href="{{ page.get_parent.url }}">Return to All Posts</a></p>
 	

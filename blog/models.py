@@ -8,10 +8,12 @@ from taggit.models import TaggedItemBase
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core import blocks
+from wagtail.core.blocks import StreamBlock
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from wagtail.snippets.models import register_snippet
+from wagtailcodeblock.blocks import CodeBlock
 
 class BlogIndexPage(Page):
     intro = RichTextField(blank=True)
@@ -19,7 +21,7 @@ class BlogIndexPage(Page):
     def get_context(self, request):
         # Update context to include only published posts, ordered by reverse-chron
         context = super().get_context(request)
-        blogpages = self.get_children().live().order_by('-first_published_at')
+        blogpages = self.get_children().live().order_by('-last_published_at')
         context['blogpages'] = blogpages
         return context
 
@@ -30,10 +32,17 @@ class BlogPageTag(TaggedItemBase):
         on_delete=models.CASCADE
     )
 
+class ContentStreamBlock(StreamBlock):
+    code = CodeBlock(label='Python', language='python')
+
 class BlogPage(Page):
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
-    body = RichTextField(blank=True)
+    body = StreamField([
+        ('heading', blocks.CharBlock(classname="full title")),
+        ('paragraph', blocks.RichTextBlock()),
+        ('code', ContentStreamBlock()),
+    ])
     tags = ClusterTaggableManager(through=BlogPageTag, blank=True)
     categories = ParentalManyToManyField('blog.BlogCategory', blank=True)
 
@@ -56,7 +65,7 @@ class BlogPage(Page):
             FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
         ], heading="Blog information"),
         FieldPanel('intro'),
-        FieldPanel('body'),
+        StreamFieldPanel('body'),
         InlinePanel('gallery_images', label="Gallery images"),
     ]
 
