@@ -165,27 +165,41 @@
 {% endblock %}
 
 {% block extra_js %}
-	<script src="{% static 'js/jquery.min.js' %}"></script>
-	<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
-	<script src="{% static 'js/jquery.scrolly.min.js' %}"></script>
-	<script src="{% static 'js/browser.min.js' %}"></script>
-	<script src="{% static 'js/breakpoints.min.js' %}"></script>
-	<script src="{% static 'js/util.js' %}"></script>
-	<script src="{% static 'js/main.js' %}"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	
+	<!--focus on div based on URL parameters-->
+	<script>
+	$( document ).ready(function() {
+		var current_url = window.location.href;
+		if (current_url.indexOf('#') != -1) {		   
+		   var jump_to_div = '#'+current_url.split('#')[1]	
+		}
+		$('html, body').animate({
+			'scrollTop' : $(jump_to_div).position().top
+		});	
+	});
+	</script>
+	
+		<!--sweet alert email message success or error-->
 	<script>
 	$( document ).ready(function() {
 		{% if messages %}
 			{% for message in messages %}
+				{% if message.tags == 'success' %}
+					icon = 'success'
+					title = 'Email sent!'
+				{% else %}
+					icon = 'error'
+					title = 'Email not sent.'
+				{% endif %}
 				swal({
-					icon: "success",
-					title: "Email sent!", 
+					icon: icon,
+					title: title, 
 					text: "{{message}}", 
 					buttons: false
 				});
 			{% endfor %}
 		{% endif %}
 	});
-</script>
+	</script>
 {% endblock %}

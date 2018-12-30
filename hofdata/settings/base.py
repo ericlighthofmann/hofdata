@@ -164,3 +164,14 @@ WAGTAIL_SITE_NAME = "hofdata"
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 BASE_URL = 'http://example.com'
+
+#Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+# use 'set EMAIL_HOST_USER = lsdkfjsl' from command line for linux
+# use `$env:<name> = "foo" for windows
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER','')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','')
+EMAIL_PORT = 587
