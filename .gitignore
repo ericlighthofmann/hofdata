@@ -3,3 +3,5 @@
 __pycache__
 myvenv
 .DS_Store
+hofdata.sock
+hofdata/wsgi.py
