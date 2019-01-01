@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'taggit',
     'django_extensions',
     'wagtailcodeblock',
+    'django.contrib.sitemaps',
 
     'django.contrib.admin',
     'django.contrib.auth',
