@@ -16,6 +16,7 @@
         </title>
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/hofdata.css' %}">
@@ -32,7 +33,6 @@
         {% block content %}{% endblock %}
 
         {# Global javascript #}
-		
         <script type="text/javascript" src="{% static 'js/hofdata.js' %}"></script>
 		<script src="{% static 'js/jquery.min.js' %}"></script>
 		<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
