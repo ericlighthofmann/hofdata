@@ -17,6 +17,19 @@
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+		
+		{% if not debug %}
+			<!-- Global site tag (gtag.js) - Google Analytics -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-68563947-3"></script>
+			<script>
+			  window.dataLayer = window.dataLayer || [];
+			  function gtag(){dataLayer.push(arguments);}
+			  gtag('js', new Date());
+
+			  gtag('config', 'UA-68563947-3');
+			</script>
+		{% endif %}
+
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/hofdata.css' %}">
@@ -44,5 +57,7 @@
         {% block extra_js %}
             {# Override this in templates to add extra javascript #}
         {% endblock %}
+		
     </body>
+	
 </html>
