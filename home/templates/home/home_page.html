@@ -182,12 +182,21 @@
 	$( document ).ready(function() {
 		{% if messages %}
 			{% for message in messages %}
-				swal({
-					icon: "success",
-					title: "Email sent!", 
-					text: "{{message}}", 
-					buttons: false
-				});
+				{% if message.tags == 'success' %}
+					swal({
+						icon: "success",
+						title: "Email sent!", 
+						text: "{{message}}", 
+						buttons: false
+					});
+				{% elif message.tags == 'error' %}
+					swal({
+						icon: "error",
+						title: "Not a valid email!", 
+						text: "{{message}}", 
+						buttons: false
+					});
+				{% endif %}
 			{% endfor %}
 		{% endif %}
 	});
