@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from decouple import config
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -176,6 +177,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 # use 'set EMAIL_HOST_USER = lsdkfjsl' from command line for linux
 # use `$env:<name> = "foo" for windows
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER','')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587

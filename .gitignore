@@ -5,3 +5,4 @@ myvenv
 .DS_Store
 hofdata.sock
 hofdata/wsgi.py
+hofdata/settings/settings.ini
