@@ -10,9 +10,12 @@ from wagtail.contrib.sitemaps.views import sitemap
 from search import views as search_views
 
 urlpatterns = [
-    url(r'^django-admin/', admin.site.urls),
+    # default django admin views
+    url(r'^hofdata-django-admin/', admin.site.urls),
 
-    url(r'^admin/', include(wagtailadmin_urls)),
+    #wagtail admin views including honeypot
+    url(r'^admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
+    url(r'^hofdata-wagtail-admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 
     url(r'^search/$', search_views.search, name='search'),

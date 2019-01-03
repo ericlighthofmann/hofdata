@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'taggit',
     'django_extensions',
     'wagtailcodeblock',
+    'admin_honeypot',
     'django.contrib.sitemaps',
 
     'django.contrib.admin',
