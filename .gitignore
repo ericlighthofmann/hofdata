@@ -6,3 +6,4 @@ myvenv
 hofdata.sock
 hofdata/wsgi.py
 hofdata/settings/settings.ini
+data/stocktrendsbot/stocktrendsbot.ini

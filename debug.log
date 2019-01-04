@@ -1,0 +1,36 @@
+"GET / HTTP/1.1" 200 10043
+"GET /static/favicon.ico HTTP/1.1" 200 15086
+"GET / HTTP/1.1" 200 10043
+"GET /static/css/hofdata.css HTTP/1.1" 200 0
+"GET /static/css/main.css HTTP/1.1" 200 73711
+"GET /static/wagtailadmin/css/userbar.css HTTP/1.1" 200 13340
+"GET /media/images/investing2.2e16d0ba.fill-640x400.jpg HTTP/1.1" 200 50227
+"GET /static/wagtailadmin/js/userbar.js HTTP/1.1" 200 1802
+"GET /static/js/hofdata.js HTTP/1.1" 200 0
+"GET /media/images/reddit3.2e16d0ba.fill-640x400.jpg HTTP/1.1" 200 55459
+"GET /static/js/jquery.scrolly.min.js HTTP/1.1" 200 831
+"GET /static/js/jquery.scrollex.min.js HTTP/1.1" 200 2257
+"GET /static/js/jquery.min.js HTTP/1.1" 200 86929
+"GET /static/css/font-awesome.min.css HTTP/1.1" 200 31004
+"GET /static/js/browser.min.js HTTP/1.1" 200 1852
+"GET /static/js/breakpoints.min.js HTTP/1.1" 200 2440
+"GET /static/js/util.js HTTP/1.1" 200 12433
+"GET /static/js/main.js HTTP/1.1" 200 4061
+"GET /static/wagtailadmin/fonts/opensans-regular.woff2 HTTP/1.1" 200 68812
+"GET /static/wagtailadmin/fonts/wagtail.woff HTTP/1.1" 200 22972
+"GET /static/fonts/fontawesome-webfont.woff2?v=4.7.0 HTTP/1.1" 200 77160
+"GET /static/images/desk_background_web.jpg HTTP/1.1" 200 228273
+"GET /static/favicon.ico HTTP/1.1" 200 15086
+"GET /blog/stock-trends-bot/ HTTP/1.1" 200 19870
+"GET /media/images/reddit3.2e16d0ba.fill-1100x440.jpg HTTP/1.1" 304 0
+"GET /blog/stock-trends-bot/ HTTP/1.1" 200 19880
+"GET /static/favicon.ico HTTP/1.1" 200 15086
+"GET / HTTP/1.1" 200 10043
+"GET /blog/ HTTP/1.1" 200 5239
+"GET /blog/investing-with-python/ HTTP/1.1" 200 26997
+"GET / HTTP/1.1" 200 10043
+"GET /asdfasdfasd HTTP/1.1" 301 0
+Not Found: /asdfasdfasd/
+"GET /asdfasdfasd/ HTTP/1.1" 404 1705
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 3464
