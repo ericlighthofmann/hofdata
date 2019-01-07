@@ -115,18 +115,11 @@ class Command(BaseCommand):
 
                         historical_price = []
                         while historical_price == []:
-                            try:
-                                historical_price = [
-                                    d['close_price'] for d in historical_api_call
-                                        if d['begins_at'] == format_date(date_input) + 'T00:00:00Z'
-                                ]
-                                date_input = date_input - relativedelta(days=1)
-                            except KeyError:
-                                historical_price = [
-                                    d['close_price'] for d in historical_api_call
-                                        if d['begins_at'] == format_date(date_input) + 'T00:00:00Z'
-                                ]
-                                date_input = date_input + relativedelta(days=1)
+                            historical_price = [
+                                d['close_price'] for d in historical_api_call
+                                    if d['begins_at'] == format_date(date_input) + 'T00:00:00Z'
+                            ]
+                            date_input = date_input + relativedelta(days=1)
                         historical_price = round(float(historical_price[0]),2)
                         return historical_price
 

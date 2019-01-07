@@ -27,7 +27,7 @@ class Company(models.Model):
         for suffix in two_char_suffix_list:
             if name_formatted[-2:] == suffix:
                 name_formatted = name_formatted[:-2]
-        setattr(self, 'name', name_formatted)
+        setattr(self, 'name', name_formatted.strip())
         setattr(self, 'name_has_been_formatted', True)
         super(Company, self).save(*args, **kwargs)
 
