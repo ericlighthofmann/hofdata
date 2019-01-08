@@ -36,16 +36,13 @@ class Command(BaseCommand):
         reddit_password = config.get('Reddit', 'REDDIT_PASSWORD') # stored in .ini file
         reddit_username = config.get('Reddit', 'REDDIT_USERNAME') # stored in .ini file
 
-        subreddit_list = ['asx', 'ausstocks', 'business', 'stocks',
-            'investing', 'finance', 'stockmarket', 'investmentclub',
-            'earningreports', 'economy', 'technology'
-        ]
         subreddit_list = [
             'asx', 'ausstocks', 'business', 'stocks',
             'investing', 'finance', 'stockmarket', 'investmentclub',
             'earningreports', 'economy', 'technology', 'wallstreetbets',
             'technology'
         ]
+
         if test:
             subreddit_list = ['testingground4bots']
 
@@ -87,7 +84,7 @@ class Command(BaseCommand):
                         company.save()
 
         # @fold
-        def start_stocktrendsbot():
+        def start_stocktrendsbot(praw_object):
 
             class StockInfo():
 
@@ -145,16 +142,16 @@ class Command(BaseCommand):
 
                     change_marker = get_change_marker(change)
                     text_output = ('Over the past ' + time_period + ', ' +
-                        current_company.symbol + ' is ' + change_marker + str(change) + '%.'
+                        current_company.symbol + ' is ' + change_marker + str(change) + '%'
                     )
                     return text_output
 
                 def get_text_output(self, current_company):
                     output = ('**' + current_company.name + ' (' + current_company.symbol + ')**' +
-                        '\n\n' + 'Current price: $' + str(self.current_price) + '.' +
-                        '\n\n' + self.weekly_text_output + '\n\n' +
-                        self.monthly_text_output + '\n\n' +
-                        self.yearly_text_output + '\n\n' +
+                        '\n\n' + 'Current price: $' + str(self.current_price) +
+                        '\n\n' + self.weekly_text_output +
+                        self.monthly_text_output +
+                        self.yearly_text_output +
                         '***' + '\n\n' + '^Beep ^Boop, ^I ^am ^a ^bot. ' +
                         '^I ^delete ^my ^comments ^if ^they ^are ^-3 ^or ^lower. ' +
                         '^Message ^[HomerG](\/u\/HomerG) ^with ^any ^suggestions, ^death ^threats, ^etc.' + '\n\n' +
@@ -174,14 +171,6 @@ class Command(BaseCommand):
                     self.yearly_text_output = self.get_trend_text_output(self.yearly_change, 'year')
                     self.text_output = self.get_text_output(current_company)
 
-            praw_object = praw.Reddit(
-                client_id = reddit_id,
-                client_secret = reddit_secret,
-                user_agent = reddit_user_agent,
-                password = reddit_password,
-                username = reddit_username
-            )
-
             for subreddit in subreddit_list:
                 logging.info('Switching to ' + str(subreddit) + '...')
                 for submission in praw_object.subreddit(subreddit).new(limit=5):
@@ -189,7 +178,7 @@ class Command(BaseCommand):
                         'submission_id', flat=True
                         ):
                         for name in Company.objects.all().values_list('name', flat=True):
-                            if name.lower() in submission.title.lower():
+                            if name.lower() in submission.title.lower().replace('\'s', '').split(' '):
                                 current_company = Company.objects.filter(name=name).first()
                                 stock_info = StockInfo(current_company)
                                 try:
@@ -222,9 +211,17 @@ class Command(BaseCommand):
         get_company_objects()
         while True:
             try:
-                start_stocktrendsbot()
-            except Exception as e:
-                send_mail(
-                'StockTrendsBot failed!', 'STB failed with an error message of ' + str(e),
-                'ericlighthofmann@gmail.com', ['ericlighthofmann@gmail.com']
+                praw_object = praw.Reddit(
+                    client_id = reddit_id,
+                    client_secret = reddit_secret,
+                    user_agent = reddit_user_agent,
+                    password = reddit_password,
+                    username = reddit_username
                 )
+                start_stocktrendsbot(praw_object)
+            except Exception as e:
+                if str(e) != 'KeyboardInterrupt':
+                    send_mail(
+                    'StockTrendsBot failed!', 'STB failed with an error message of ' + str(e),
+                    'ericlighthofmann@gmail.com', ['ericlighthofmann@gmail.com']
+                    )
