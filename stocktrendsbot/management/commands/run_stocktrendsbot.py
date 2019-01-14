@@ -6,9 +6,12 @@ from datetime import datetime
 import requests
 from dateutil.relativedelta import relativedelta
 import time
+import json
 
 import praw
 from tqdm import tqdm
+from iexfinance.stocks import Stock
+from iexfinance.stocks import get_historical_data
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.mail import send_mail
@@ -38,6 +41,9 @@ class Command(BaseCommand):
 
         all_companies_in_db = Company.objects.all().values_list('symbol', flat=True)
         all_company_names_in_db = Company.objects.all().values_list('name', flat=True)
+
+        emailed = False
+        emailed_datetime = None
 
         # @fold
         def get_company_objects():
@@ -79,36 +85,30 @@ class Command(BaseCommand):
             class StockInfo():
 
                 def get_current_price(self, current_company):
-                    api_call = requests.get(
-                        'https://api.robinhood.com/quotes/'+current_company.symbol+'/'
-                    ).json()
-                    last_trade_price = api_call.get('last_trade_price', 'N/A')
-                    current_price = round(float(last_trade_price),2)
+                    logging.info('getting info for ' + str(current_company.name) + ' (' + str(current_company.symbol) + ')')
+                    stock_object = Stock(current_company.symbol.upper())
+                    current_price = round(float(stock_object.get_price()),2)
                     return current_price
 
                 def get_historical_change(self, current_company):
-                    historical_api_call = requests.get(
-                        'https://api.robinhood.com/quotes/historicals/?symbols='+
-                        current_company.symbol+'&interval=day').json()
-                    historical_api_call = historical_api_call['results'][0]['historicals']
 
-                    def format_date(date_input):
-                        return datetime.strftime(date_input, '%Y-%m-%d')
                     one_week_ago = datetime.now() - relativedelta(weeks=1)
                     one_month_ago = datetime.now() - relativedelta(months=1)
                     one_year_ago = datetime.now() - relativedelta(years=1)
 
-                    def get_historical_price(date_input):
+                    def get_historical_price(time_period):
+                        def format_date(date_input):
+                            return datetime.strftime(date_input, '%Y-%m-%d')
+                        historical_price = {}
+                        while historical_price == {}:
+                            historical_price = get_historical_data(current_company.symbol.upper(),
+                                format_date(time_period), time_period, output_format='json'
+                            )
+                            if historical_price == {}:
+                                time_period = time_period + relativedelta(days=1)
 
-                        historical_price = []
-                        while historical_price == []:
-                            historical_price = [
-                                d['close_price'] for d in historical_api_call
-                                    if d['begins_at'] == format_date(date_input) + 'T00:00:00Z'
-                            ]
-                            date_input = date_input + relativedelta(days=1)
-                        historical_price = round(float(historical_price[0]),2)
-                        return historical_price
+                        price = historical_price[format_date(time_period)]['close']
+                        return price
 
                     weekly_price = get_historical_price(one_week_ago)
                     monthly_price = get_historical_price(one_month_ago)
@@ -132,7 +132,7 @@ class Command(BaseCommand):
 
                     change_marker = get_change_marker(change)
                     text_output = ('Over the past ' + time_period + ', ' +
-                        current_company.symbol + ' is ' + change_marker + str(change) + '%'
+                        current_company.symbol + ' is ' + change_marker + str(change) + '%' + '\n\n'
                     )
                     return text_output
 
@@ -162,10 +162,9 @@ class Command(BaseCommand):
                     self.text_output = self.get_text_output(current_company)
 
             subreddit_list = [
-                'asx', 'ausstocks', 'business', 'stocks',
-                'investing', 'finance', 'stockmarket', 'investmentclub',
-                'earningreports', 'economy', 'technology', 'wallstreetbets',
-                'technology'
+                'asx', 'ausstocks', 'business', 'stocks', 'investing',
+                'finance', 'stockmarket', 'investmentclub', 'earningreports',
+                'economy', 'technology', 'wallstreetbets'
             ]
 
             if test:
@@ -174,6 +173,7 @@ class Command(BaseCommand):
             for sr in subreddit_list:
 
                 logging.info('Switching to ' + str(sr) + '...')
+                time.sleep(5)
                 for submission in praw_object.subreddit(sr).new(limit=5):
                     if submission.id not in PostRepliedTo.objects.all().values_list(
                         'submission_id', flat=True
@@ -182,24 +182,25 @@ class Command(BaseCommand):
                             if name.lower() in submission.title.lower().replace('\'s', '').split(' '):
                                 current_company = Company.objects.filter(name=name).first()
                                 stock_info = StockInfo(current_company)
-                                try:
-                                    logging.info('Replying to : ' + str(submission.title))
-                                    logging.info('reddit.com' + str(submission.permalink))
-                                    submission.reply(stock_info.text_output)
-                                    PostRepliedTo.objects.get_or_create(
-                                        submission_id = submission.id,
-                                        url = 'reddit.com'+submission.permalink,
-                                    )
-                                except praw.exceptions.APIException as e:
-                                    if 'minutes' in str(e):
-                                        time_to_wait = int(str(e).split(' minutes')[0][-1:])
-                                        logging.warning('Sleeping for ' + str(time_to_wait) + ' minutes.')
-                                        time.sleep(time_to_wait*60+70)
-                                    elif 'seconds' in str(e):
-                                        time_to_wait = int(str(e).split(' seconds')[0][-2:])
-                                        logging.warning('Sleeping for ' + str(time_to_wait) + ' seconds.')
-                                        time.sleep(time_to_wait+10)
-                                time.sleep(10)
+                                if stock_info.weekly_price != 'N/A' or stock_info.monthly_price != 'N/A' or stock_info.yearly_price != 'N/A':
+                                    try:
+                                        logging.info('Replying to : ' + str(submission.title))
+                                        logging.info('reddit.com' + str(submission.permalink))
+                                        submission.reply(stock_info.text_output)
+                                        PostRepliedTo.objects.get_or_create(
+                                            submission_id = submission.id,
+                                            url = 'reddit.com'+submission.permalink,
+                                        )
+                                    except praw.exceptions.APIException as e:
+                                        if 'minutes' in str(e):
+                                            time_to_wait = int(str(e).split(' minutes')[0][-1:])
+                                            logging.warning('Sleeping for ' + str(time_to_wait) + ' minutes.')
+                                            time.sleep(time_to_wait*60+70)
+                                        elif 'seconds' in str(e):
+                                            time_to_wait = int(str(e).split(' seconds')[0][-2:])
+                                            logging.warning('Sleeping for ' + str(time_to_wait) + ' seconds.')
+                                            time.sleep(time_to_wait+10)
+                                    time.sleep(10)
 
 
             # checking for downvoted comments and deleting at <= -3
@@ -221,8 +222,17 @@ class Command(BaseCommand):
                 )
                 start_stocktrendsbot(praw_object)
             except Exception as e:
-                if str(e) != 'KeyboardInterrupt':
+                def send_me_mail(e):
                     send_mail(
                     'StockTrendsBot failed!', 'STB failed with an error message of ' + str(e),
                     'ericlighthofmann@gmail.com', ['ericlighthofmann@gmail.com']
                     )
+                if str(e) != 'KeyboardInterrupt':
+                    if not emailed:
+                        send_me_email(e)
+                        emailed = True
+                        emailed_datetime = datetime.now()
+                    else:
+                        last_emailed = datetime.now() - emailed_datetime
+                        if last_emailed.seconds / 60 / 60 > 2:
+                            send_me_email(e)
