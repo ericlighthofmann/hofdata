@@ -36,16 +36,6 @@ class Command(BaseCommand):
         reddit_password = config.get('Reddit', 'REDDIT_PASSWORD') # stored in .ini file
         reddit_username = config.get('Reddit', 'REDDIT_USERNAME') # stored in .ini file
 
-        subreddit_list = [
-            'asx', 'ausstocks', 'business', 'stocks',
-            'investing', 'finance', 'stockmarket', 'investmentclub',
-            'earningreports', 'economy', 'technology', 'wallstreetbets',
-            'technology'
-        ]
-
-        if test:
-            subreddit_list = ['testingground4bots']
-
         all_companies_in_db = Company.objects.all().values_list('symbol', flat=True)
         all_company_names_in_db = Company.objects.all().values_list('name', flat=True)
 
@@ -171,9 +161,20 @@ class Command(BaseCommand):
                     self.yearly_text_output = self.get_trend_text_output(self.yearly_change, 'year')
                     self.text_output = self.get_text_output(current_company)
 
-            for subreddit in subreddit_list:
-                logging.info('Switching to ' + str(subreddit) + '...')
-                for submission in praw_object.subreddit(subreddit).new(limit=5):
+            subreddit_list = [
+                'asx', 'ausstocks', 'business', 'stocks',
+                'investing', 'finance', 'stockmarket', 'investmentclub',
+                'earningreports', 'economy', 'technology', 'wallstreetbets',
+                'technology'
+            ]
+
+            if test:
+                subreddit_list = ['testingground4bots']
+
+            for sr in subreddit_list:
+
+                logging.info('Switching to ' + str(sr) + '...')
+                for submission in praw_object.subreddit(sr).new(limit=5):
                     if submission.id not in PostRepliedTo.objects.all().values_list(
                         'submission_id', flat=True
                         ):
