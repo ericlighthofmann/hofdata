@@ -182,24 +182,23 @@ class Command(BaseCommand):
                             if name.lower() in submission.title.lower().replace('\'s', '').split(' '):
                                 current_company = Company.objects.filter(name=name).first()
                                 stock_info = StockInfo(current_company)
-                                if stock_info.weekly_price != 'N/A' or stock_info.monthly_price != 'N/A' or stock_info.yearly_price != 'N/A':
-                                    try:
-                                        logging.info('Replying to : ' + str(submission.title))
-                                        logging.info('reddit.com' + str(submission.permalink))
-                                        submission.reply(stock_info.text_output)
-                                        PostRepliedTo.objects.get_or_create(
-                                            submission_id = submission.id,
-                                            url = 'reddit.com'+submission.permalink,
-                                        )
-                                    except praw.exceptions.APIException as e:
-                                        if 'minutes' in str(e):
-                                            time_to_wait = int(str(e).split(' minutes')[0][-1:])
-                                            logging.warning('Sleeping for ' + str(time_to_wait) + ' minutes.')
-                                            time.sleep(time_to_wait*60+70)
-                                        elif 'seconds' in str(e):
-                                            time_to_wait = int(str(e).split(' seconds')[0][-2:])
-                                            logging.warning('Sleeping for ' + str(time_to_wait) + ' seconds.')
-                                            time.sleep(time_to_wait+10)
+                                try:
+                                    logging.info('Replying to : ' + str(submission.title))
+                                    logging.info('reddit.com' + str(submission.permalink))
+                                    submission.reply(stock_info.text_output)
+                                    PostRepliedTo.objects.get_or_create(
+                                        submission_id = submission.id,
+                                        url = 'reddit.com'+submission.permalink,
+                                    )
+                                except praw.exceptions.APIException as e:
+                                    if 'minutes' in str(e):
+                                        time_to_wait = int(str(e).split(' minutes')[0][-1:])
+                                        logging.warning('Sleeping for ' + str(time_to_wait) + ' minutes.')
+                                        time.sleep(time_to_wait*60+70)
+                                    elif 'seconds' in str(e):
+                                        time_to_wait = int(str(e).split(' seconds')[0][-2:])
+                                        logging.warning('Sleeping for ' + str(time_to_wait) + ' seconds.')
+                                        time.sleep(time_to_wait+10)
                                     time.sleep(10)
 
 
