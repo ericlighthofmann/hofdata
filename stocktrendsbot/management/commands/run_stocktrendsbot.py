@@ -44,6 +44,11 @@ class Command(BaseCommand):
 
         emailed = False
         emailed_datetime = None
+        def send_me_email(e):
+            send_mail(
+            'StockTrendsBot failed!', 'STB failed with an error message of ' + str(e),
+            'ericlighthofmann@gmail.com', ['ericlighthofmann@gmail.com']
+            )
 
         # @fold
         def get_company_objects():
@@ -162,9 +167,9 @@ class Command(BaseCommand):
                     self.text_output = self.get_text_output(current_company)
 
             subreddit_list = [
-                'asx', 'ausstocks', 'business', 'stocks', 'investing',
+                'asx', 'ausstocks', 'business', 'stocks',
                 'finance', 'stockmarket', 'investmentclub', 'earningreports',
-                'economy', 'technology', 'wallstreetbets'
+                'economy', 'wallstreetbets'
             ]
 
             if test:
@@ -221,11 +226,6 @@ class Command(BaseCommand):
                 )
                 start_stocktrendsbot(praw_object)
             except Exception as e:
-                def send_me_mail(e):
-                    send_mail(
-                    'StockTrendsBot failed!', 'STB failed with an error message of ' + str(e),
-                    'ericlighthofmann@gmail.com', ['ericlighthofmann@gmail.com']
-                    )
                 if str(e) != 'KeyboardInterrupt':
                     if not emailed:
                         send_me_email(e)
