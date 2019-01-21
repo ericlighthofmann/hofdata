@@ -19,10 +19,6 @@
 			<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/datatables.min.css"/>
 		{% endblock %}
 		
-		{% block extra_js %}
-			<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/datatables.min.js"></script>
-		{% endblock %}
-		
 	</head>
 	<body class="is-preload">
 	
@@ -81,17 +77,19 @@
 					<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
 				</ul>
 			</div>
-		</footer>
+		</footer>	
 		
-		<!-- initialize data table -->
-		<script>
-			$(document).ready( function () {
-				$('#all-candidates-table').DataTable({
-					scrollY: 700,
-				});
-			} );
-		</script>
-
 {% endblock %}
+
+	{% block extra_js %}
+			<!-- initialize data table -->
+			<script>
+				$(document).ready( function () {
+					$('#all-candidates-table').DataTable({
+						scrollY: 700,
+					});
+				} );
+			</script>
+		{% endblock %}
 
 	</body>

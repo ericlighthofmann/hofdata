@@ -44,7 +44,6 @@
 		{% block content %}{% endblock %}
 		
 		{# Global javascript #}
-        <script type="text/javascript" src="{% static 'js/hofdata.js' %}"></script>
 		<script src="{% static 'js/jquery.min.js' %}"></script>
 		<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
 		<script src="{% static 'js/jquery.scrolly.min.js' %}"></script>
@@ -52,13 +51,11 @@
 		<script src="{% static 'js/breakpoints.min.js' %}"></script>
 		<script src="{% static 'js/util.js' %}"></script>
 		<script src="{% static 'js/main.js' %}"></script>
+		<script type="text/javascript" src="//cdn.datatables.net/v/bs4/dt-1.10.18/b-1.5.4/datatables.min.js"></script>
         {% block extra_js %}
             {# Override this in templates to add extra javascript #}
         {% endblock %}
         
-		
-		
-		
     </body>
 	
 </html>
