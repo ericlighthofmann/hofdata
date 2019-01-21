@@ -42,8 +42,18 @@ class Command(BaseCommand):
         all_companies_in_db = Company.objects.all().values_list('symbol', flat=True)
         all_company_names_in_db = Company.objects.all().values_list('name', flat=True)
 
+        subreddit_list = [
+            'asx', 'ausstocks', 'business', 'stocks',
+            'finance', 'stockmarket', 'investmentclub', 'earningreports',
+            'economy', 'wallstreetbets'
+        ]
+        if test:
+            subreddit_list = ['testingground4bots']
+
+        ignore_list = []
         emailed = False
         emailed_datetime = None
+
         def send_me_email(e):
             send_mail(
             'StockTrendsBot failed!', 'STB failed with an error message of ' + str(e),
@@ -85,14 +95,19 @@ class Command(BaseCommand):
                         company.save()
 
         # @fold
-        def start_stocktrendsbot(praw_object):
+        def start_stocktrendsbot(praw_object, emailed, emailed_datetime):
 
             class StockInfo():
 
-                def get_current_price(self, current_company):
+                def get_current_price(self, current_company, submission_id):
                     logging.info('getting info for ' + str(current_company.name) + ' (' + str(current_company.symbol) + ')')
-                    stock_object = Stock(current_company.symbol.upper())
-                    current_price = round(float(stock_object.get_price()),2)
+                    try:
+                        stock_object = Stock(current_company.symbol.upper())
+                        current_price = round(float(stock_object.get_price()),2)
+                    except Exception as e:
+                        current_price = None
+                        logging.warning(e)
+                        ignore_list.append(submission_id)
                     return current_price
 
                 def get_historical_change(self, current_company):
@@ -148,14 +163,14 @@ class Command(BaseCommand):
                         self.monthly_text_output +
                         self.yearly_text_output +
                         '***' + '\n\n' + '^Beep ^Boop, ^I ^am ^a ^bot. ' +
-                        '^I ^delete ^my ^comments ^if ^they ^are ^-3 ^or ^lower. ' +
+                        '^I ^delete ^my ^comments ^if ^they ^are ^-2 ^or ^lower. ' +
                         '^Message ^[HomerG](\/u\/HomerG) ^with ^any ^suggestions, ^death ^threats, ^etc.' + '\n\n' +
                         '^To ^see ^source ^code ^and ^how ^I ^was ^made, ^click ^[here.](http:\/\/www.hofdata.com/blog/stock-trends-bot)')
                     return output
 
-                def __init__(self, current_company):
+                def __init__(self, current_company, submission_id):
 
-                    self.current_price = self.get_current_price(current_company)
+                    self.current_price = self.get_current_price(current_company, submission_id)
                     self.weekly_price, self.monthly_price, self.yearly_price = \
                         self.get_historical_change(current_company)
                     self.weekly_change = self.get_change(self.current_price, self.weekly_price)
@@ -166,72 +181,70 @@ class Command(BaseCommand):
                     self.yearly_text_output = self.get_trend_text_output(self.yearly_change, 'year')
                     self.text_output = self.get_text_output(current_company)
 
-            subreddit_list = [
-                'asx', 'ausstocks', 'business', 'stocks',
-                'finance', 'stockmarket', 'investmentclub', 'earningreports',
-                'economy', 'wallstreetbets'
-            ]
-
-            if test:
-                subreddit_list = ['testingground4bots']
 
             for sr in subreddit_list:
-
-                logging.info('Switching to ' + str(sr) + '...')
-                time.sleep(5)
-                for submission in praw_object.subreddit(sr).new(limit=5):
-                    if submission.id not in PostRepliedTo.objects.all().values_list(
-                        'submission_id', flat=True
-                        ):
-                        for name in Company.objects.all().values_list('name', flat=True):
-                            if name.lower() in submission.title.lower().replace('\'s', '').split(' '):
-                                current_company = Company.objects.filter(name=name).first()
-                                stock_info = StockInfo(current_company)
-                                try:
-                                    logging.info('Replying to : ' + str(submission.title))
-                                    logging.info('reddit.com' + str(submission.permalink))
-                                    submission.reply(stock_info.text_output)
-                                    PostRepliedTo.objects.get_or_create(
-                                        submission_id = submission.id,
-                                        url = 'reddit.com'+submission.permalink,
-                                    )
-                                except praw.exceptions.APIException as e:
-                                    if 'minutes' in str(e):
-                                        time_to_wait = int(str(e).split(' minutes')[0][-1:])
-                                        logging.warning('Sleeping for ' + str(time_to_wait) + ' minutes.')
-                                        time.sleep(time_to_wait*60+70)
-                                    elif 'seconds' in str(e):
-                                        time_to_wait = int(str(e).split(' seconds')[0][-2:])
-                                        logging.warning('Sleeping for ' + str(time_to_wait) + ' seconds.')
-                                        time.sleep(time_to_wait+10)
-                                    time.sleep(10)
-
-
-            # checking for downvoted comments and deleting at <= -3
-            comments = praw_object.user.me().comments.new(limit=None)
-            for comment in comments:
-                if comment.score <= -3:
-                    logging.info('Deleting a comment at ' + str(comment.permalink))
-                    comment.delete()
-
-        get_company_objects()
-        while True:
-            try:
-                praw_object = praw.Reddit(
-                    client_id = reddit_id,
-                    client_secret = reddit_secret,
-                    user_agent = reddit_user_agent,
-                    password = reddit_password,
-                    username = reddit_username
-                )
-                start_stocktrendsbot(praw_object)
-            except Exception as e:
-                if str(e) != 'KeyboardInterrupt':
+                try:
+                    logging.info('Switching to ' + str(sr) + '...')
+                    time.sleep(5)
+                    for submission in praw_object.subreddit(sr).new(limit=5):
+                        if submission.id not in PostRepliedTo.objects.all().values_list(
+                            'submission_id', flat=True
+                            ) and submission.id not in ignore_list:
+                            for name in Company.objects.all().values_list('name', flat=True):
+                                if name.lower() in submission.title.lower().replace('\'s', '').split(' '):
+                                    current_company = Company.objects.filter(name=name).first()
+                                    stock_info = StockInfo(current_company, submission.id)
+                                    if not stock_info.current_price:
+                                        continue
+                                    else:
+                                        try:
+                                            logging.info('Replying to : ' + str(submission.title))
+                                            logging.info('reddit.com' + str(submission.permalink))
+                                            submission.reply(stock_info.text_output)
+                                            PostRepliedTo.objects.get_or_create(
+                                                submission_id = submission.id,
+                                                url = 'reddit.com'+submission.permalink,
+                                            )
+                                        except praw.exceptions.APIException as e:
+                                            if 'minutes' in str(e):
+                                                time_to_wait = int(str(e).split(' minutes')[0][-1:])
+                                                logging.warning('Sleeping for ' + str(time_to_wait) + ' minutes.')
+                                                time.sleep(time_to_wait*60+70)
+                                            elif 'seconds' in str(e):
+                                                time_to_wait = int(str(e).split(' seconds')[0][-2:])
+                                                logging.warning('Sleeping for ' + str(time_to_wait) + ' seconds.')
+                                                time.sleep(time_to_wait+10)
+                                            time.sleep(10)
+                        else:
+                            continue
+                except KeyboardInterrupt:
+                    pass
+                except Exception as e:
                     if not emailed:
                         send_me_email(e)
                         emailed = True
                         emailed_datetime = datetime.now()
                     else:
                         last_emailed = datetime.now() - emailed_datetime
-                        if last_emailed.seconds / 60 / 60 > 2:
+                        emailed_datetime = datetime.now()
+                        if (last_emailed.seconds / 60 / 60) > 2:
                             send_me_email(e)
+                    continue
+
+            # checking for downvoted comments and deleting at <= -2
+            comments = praw_object.user.me().comments.new(limit=None)
+            for comment in comments:
+                if comment.score <= -2:
+                    logging.info('Deleting a comment at ' + str(comment.permalink))
+                    comment.delete()
+
+        get_company_objects()
+        while True:
+            praw_object = praw.Reddit(
+                client_id = reddit_id,
+                client_secret = reddit_secret,
+                user_agent = reddit_user_agent,
+                password = reddit_password,
+                username = reddit_username
+            )
+            start_stocktrendsbot(praw_object, emailed, emailed_datetime)

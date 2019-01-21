@@ -30,7 +30,6 @@
 			</script>
 		{% endif %}
 
-
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/hofdata.css' %}">
 		<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
@@ -42,8 +41,6 @@
 
     <body class="{% block body_class %}{% endblock %} is-preload">
         {% wagtailuserbar %}
-
-        {% block content %}{% endblock %}
 
         {# Global javascript #}
         <script type="text/javascript" src="{% static 'js/hofdata.js' %}"></script>
@@ -57,6 +54,8 @@
         {% block extra_js %}
             {# Override this in templates to add extra javascript #}
         {% endblock %}
+		
+		{% block content %}{% endblock %}
 		
     </body>
 	
